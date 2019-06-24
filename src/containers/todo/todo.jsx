@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { addTask } from '../../actions/actionCreator';
+import { addTast } from '../../actions/actionCreator';
 
 import ToDoInput from '../../components/todo-input/todo-input';
 import ToDoList from '../../components/todo-list/todo-list';
@@ -21,11 +21,11 @@ class ToDo extends Component {
     })
   }
 
-  addTask = ({ key }) => {
+  addTast = ({ key }) => {
     const { taskText } = this.state;
     if (taskText.length > 3 && key === 'Enter') {
-      const {addTask} = this.props;
-      addTask((new Date()).getTime(), taskText, false);
+      const {addTast} = this.props;
+      addTast((new Date()).getTime(), taskText, false);
       this.setState({
         taskText: '',
       })
@@ -39,7 +39,7 @@ class ToDo extends Component {
     console.log(taskText);
     return (
       <div className="todo-wrapper">
-        <ToDoInput onKeyPress={this.addTask} onChange={this.handleInputChange} value={taskText} />
+        <ToDoInput onKeyPress={this.addTast} onChange={this.handleInputChange} value={taskText} />
         {isTasksExist && <ToDoList tasksList={tasks} />}
         {isTasksExist && <Footer amount={tasks.length} activeFilter={activeFilter} />}
       </div>
@@ -49,5 +49,5 @@ class ToDo extends Component {
 
 export default connect(state => ({
   tasks: state.tasks,
-}), { addTask })(ToDo);
+}), { addTast })(ToDo);
 
