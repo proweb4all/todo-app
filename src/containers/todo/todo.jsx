@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { addTast, removeTask, completeTask } from '../../actions/actionCreator';
+import { addTast, removeTask, completeTask, changeFilter } from '../../actions/actionCreator';
 
 import ToDoInput from '../../components/todo-input/todo-input';
 import ToDoList from '../../components/todo-list/todo-list';
@@ -12,7 +12,7 @@ import './todo.css';
 class ToDo extends Component {
 
   state = {
-    activeFilter: 'all',
+    // activeFilter: 'all',
     taskText: ''
   }
   handleInputChange = ({target: {value}}) => {
@@ -34,20 +34,21 @@ class ToDo extends Component {
 
   render() {
     const { activeFilter, taskText } = this.state;
-    const { tasks, removeTask, completeTask } = this.props;
+    const { tasks, removeTask, completeTask, filter, changeFilter } = this.props;
     const isTasksExist = tasks && tasks.length > 0;
     console.log(taskText);
     return (
       <div className="todo-wrapper">
         <ToDoInput onKeyPress={this.addTast} onChange={this.handleInputChange} value={taskText} />
         {isTasksExist && <ToDoList tasksList={tasks} removeTask={removeTask} completeTask={completeTask} />}
-        {isTasksExist && <Footer amount={tasks.length} activeFilter={activeFilter} />}
+        {isTasksExist && <Footer changeFilter={changeFilter} amount={tasks.length} activeFilter={filter} />}
       </div>
     );
   }
 }
 
-export default connect(state => ({
-  tasks: state.tasks,
-}), { addTast, removeTask, completeTask })(ToDo);
+export default connect(({ tasks, filter }) => ({
+  tasks,
+  filter,
+}), { addTast, removeTask, completeTask, changeFilter })(ToDo);
 
