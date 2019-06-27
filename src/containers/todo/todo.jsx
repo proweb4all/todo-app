@@ -15,7 +15,7 @@ class ToDo extends Component {
     // activeFilter: 'all',
     taskText: ''
   }
-  handleInputChange = ({target: {value}}) => {
+  handleInputChange = ({ target: { value } }) => {
     this.setState({
       taskText: value
     })
@@ -24,7 +24,7 @@ class ToDo extends Component {
   addTast = ({ key }) => {
     const { taskText } = this.state;
     if (taskText.length > 3 && key === 'Enter') {
-      const {addTast} = this.props;
+      const { addTast } = this.props;
       addTast((new Date()).getTime(), taskText, false);
       this.setState({
         taskText: '',
@@ -32,23 +32,38 @@ class ToDo extends Component {
     }
   }
 
+  filterTasks = (tasks, activeFilter) => {
+    switch (activeFilter) {
+      case 'completed':
+        return tasks.filter(task => task.isCompleted);
+      case 'active':
+        return tasks.filter(task => !task.isCompleted);
+      default:
+        return tasks;
+    }
+  }
+
+  getActiveTasksCounter = tasks => tasks.filter(task => !task.isCompleted).length;
+
   render() {
-    const { activeFilter, taskText } = this.state;
-    const { tasks, removeTask, completeTask, filter, changeFilter } = this.props;
+    const { taskText } = this.state;
+    const { tasks, removeTask, completeTask, filters, changeFilter } = this.props;
     const isTasksExist = tasks && tasks.length > 0;
-    console.log(taskText);
+    const filteredTasks = this.filterTasks(tasks, filters);
+    const taskCounter = this.getActiveTasksCounter(tasks);
+
     return (
       <div className="todo-wrapper">
         <ToDoInput onKeyPress={this.addTast} onChange={this.handleInputChange} value={taskText} />
-        {isTasksExist && <ToDoList tasksList={tasks} removeTask={removeTask} completeTask={completeTask} />}
-        {isTasksExist && <Footer changeFilter={changeFilter} amount={tasks.length} activeFilter={filter} />}
+        {isTasksExist && <ToDoList tasksList={filteredTasks} removeTask={removeTask} completeTask={completeTask} />}
+        {isTasksExist && <Footer changeFilter={changeFilter} amount={taskCounter} activeFilter={filters} />}
       </div>
     );
   }
 }
 
-export default connect(({ tasks, filter }) => ({
+export default connect(({ tasks, filters }) => ({
   tasks,
-  filter,
+  filters,
 }), { addTast, removeTask, completeTask, changeFilter })(ToDo);
 
